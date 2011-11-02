@@ -6,7 +6,17 @@
 
 typedef struct  UserInterface
 {
-    GtkWidget* MainWnd  ;
+    GtkWidget*       MainWnd;
+    GtkUIManager*         ui;
+    GtkActionGroup*  actions;
+    GtkWidget*       MainBox;
+    GtkWidget*          hBox;
+    GtkWidget*          vBox;
+    GtkWidget*       LeftBar;
+    //GtkWidget* ImageView;
+    GtkWidget*  GridDataView;
+    GtkWidget*    ImageFrame;
+    GtkWidget* GridDataFrame;
 
 
 

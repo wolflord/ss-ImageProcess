@@ -1,7 +1,7 @@
 
 CC=gcc
 PROG_NAME=main
-INCS=ultrasonic.h defines.h interface.h
+INCS=project.h defines.h interface.h
 
 SRCS=main.c file_op.c drawui.c callback.c
 

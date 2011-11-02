@@ -2,7 +2,7 @@
 // ultra sonic
 // 2011/10/30
 
-#include "ultrasonic.h"
+#include "project.h"
 
 UI ui;
 UI_P p_ui;
@@ -146,9 +146,12 @@ int main(int argc, char* argv[])
 
     if(ret)
     {
-	Debug("Initialize Parameters!") ;
-	InitParameters() ;
+		Debug("Initialize Parameters!") ;
+		InitParameters() ;
     }
+    /* Init Gtk. */
+    g_thread_init(NULL);
+	gdk_threads_init();
     gtk_init( &argc, &argv) ;
 
     Debug("Initialize the User Interface!") ;
@@ -158,7 +161,10 @@ int main(int argc, char* argv[])
     p_ui->TimerID[0] = g_timeout_add ( 1000, timmer_callback_1s,  NULL );
     // idle thread
     //gtk_idle_add  ( AppIdleFunction, NULL );
-    gtk_idle_add_full( G_PRIORITY_HIGH_IDLE, AppIdleFunction, NULL, NULL, NULL);
-    gtk_main() ;
+    //gtk_idle_add_full( G_PRIORITY_HIGH_IDLE, AppIdleFunction, NULL, NULL, NULL);
+    gdk_threads_enter();
+	gtk_main();
+	gdk_threads_leave();
+	
     return 0 ;
 }

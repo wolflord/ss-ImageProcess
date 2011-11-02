@@ -49,8 +49,7 @@ extern int AppIdleFunction (gpointer data)    ;
 extern void activate_action (GtkAction *action);
 extern void activate_radio_action (GtkAction *action, GtkRadioAction *current);
 extern void About_Message (GtkAction *action);
-
-
+extern void open_file_action(GtkAction* action) ;
 
 
 

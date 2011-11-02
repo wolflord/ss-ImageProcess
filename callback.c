@@ -3,7 +3,7 @@
 void AppExit (GtkWidget* widget, GdkEvent* event, gpointer data)
 {
     Debug("Main Function Exit!") ;
-    write_parameter_file("default.param" , &(p_ui->para));
+    write_parameter_file(".CONFIG" , &(p_ui->para));
     gtk_main_quit();
 }
 
@@ -61,3 +61,12 @@ activate_radio_action (GtkAction *action, GtkRadioAction *current)
   g_message ("Radio action \"%s\" selected",
 	     gtk_action_get_name (GTK_ACTION (current)));
 }
+
+
+void 
+open_file_action (GtkAction* action)
+{
+   Debug ("OPEN FILE ACTION!") ;
+}
+
+

@@ -15,14 +15,20 @@ typedef struct _ICON
    char* label    ;
 } ICON_FILE, *ICON_FILE_P;
 static ICON_FILE icons[] = {
-        {"res/OPMS.ico"  , "ICON_1" , "frame_icon" } ,
-        {"res/icon1.ico" , "ICON_2" , "frame_icon" } ,
-        {"res/icon2.ico" , "ICON_3" , "frame_icon" } ,
-        {"res/icon3.ico" , "ICON_4" , "frame_icon" } ,
-        {"res/icon4.ico" , "ICON_5" , "frame_icon" } ,
-        {"res/icon5.ico" , "ICON_6" , "frame_icon" } ,
-        {"res/icon9.ico" , "ICON_7" , "frame_icon" } ,
+        {"res/OPMS.ico"  , "SS_ICON_1" , "frame_icon" } ,
+        {"res/icon1.ico" , "SS_ICON_2" , "frame_icon" } ,
+        {"res/icon2.ico" , "SS_ICON_3" , "frame_icon" } ,
+        {"res/icon3.ico" , "SS_ICON_4" , "frame_icon" } ,
+        {"res/icon4.ico" , "SS_ICON_5" , "frame_icon" } ,
+        {"res/icon5.ico" , "SS_ICON_6" , "frame_icon" } ,
+        {"res/icon9.ico" , "SS_ICON_7" , "frame_icon" } ,
+		{"res/icon6.ico" , "SS_ICON_8" , "frame_icon" } ,
+		{"res/icon7.ico" , "SS_ICON_9" , "frame_icon" } ,
 } ;
+
+// keep the size of maxmized screen
+int SCREEN_WIDTH  = 0;
+int SCREEN_HEIGHT = 0;
 
 
 static void register_stock_icons (void)
@@ -32,20 +38,29 @@ static void register_stock_icons (void)
     GtkIconSet *icon_set;
 	GdkPixbuf *transparent;
 	char *filename;
-    // if the icons is registed
+    int icon_num ;
+	int i ; 
+	// if the icons is registed
     // return
     static gboolean icons_registed = FALSE ;
     if(icons_registed)  return ;
 
-	static GtkStockItem items[] = {
-	{ "demo-gtk-logo",
-	  "Help",
-	  0, 0, NULL }
-	};
+	//static GtkStockItem items[] = {
+	//{ "demo-gtk-logo",
+	//  "Help",
+	//  0, 0, NULL }
+	//};
+    icon_num = sizeof(icons) / sizeof(ICON_FILE) ;
+    GtkStockItem* items = (GtkStockItem*) malloc (sizeof(GtkStockItem) * icon_num) ;
+    memset( items , 0 , sizeof(GtkStockItem)* icon_num ) ;
+	for(i = 0 ; i< icon_num ; i++ )
+	{
+		items[i].stock_id = icons[i].id ;
+		items[i].label    = icons[i].label ;
+	}
 
 	/* Register our stock items */
-	gtk_stock_add (items, G_N_ELEMENTS (items));
-
+	gtk_stock_add (items, icon_num);
 	/* Add our custom icon factory to the list of defaults */
 	factory = gtk_icon_factory_new ();
 	gtk_icon_factory_add_default (factory);
@@ -54,32 +69,28 @@ static void register_stock_icons (void)
 	* so you can run gtk-demo without installing GTK, then looks
 	* in the location where the file is installed.
 	*/
-	pixbuf = NULL;
-	filename = "res/icon9.ico" ;
-	if (filename)
+	
+	for(i = 0 ; i< icon_num ; i++)
 	{
-	    pixbuf = gdk_pixbuf_new_from_file (filename, NULL);
-	    // g_free (filename);
+		filename = icons[i].filename ;
+		pixbuf = gdk_pixbuf_new_from_file (filename , NULL);
+		if(pixbuf == NULL) {  
+		    printf("Error!--load icon file fail!\n") ;
+			continue ;
+		}
+
+    	transparent = gdk_pixbuf_add_alpha (pixbuf, TRUE, 0xff, 0xff, 0xff);
+	    icon_set = gtk_icon_set_new_from_pixbuf (transparent);
+	    gtk_icon_factory_add (factory, icons[i].id , icon_set);
+	    gtk_icon_set_unref (icon_set);
+	    g_object_unref (pixbuf);
+	    g_object_unref (transparent);
 	}
-
-	/* Register icon to accompany stock item */
-	if (pixbuf != NULL)
-	{
-	  /* The gtk-logo-rgb icon has a white background, make it transparent */
-	  transparent = gdk_pixbuf_add_alpha (pixbuf, TRUE, 0xff, 0xff, 0xff);
-
-	  icon_set = gtk_icon_set_new_from_pixbuf (transparent);
-	  gtk_icon_factory_add (factory, "demo-gtk-logo", icon_set);
-	  gtk_icon_set_unref (icon_set);
-	  g_object_unref (pixbuf);
-	  g_object_unref (transparent);
-	}
-	else
-	  g_warning ("failed to load GTK logo for toolbar");
-
+	
 	/* Drop our reference to the factory, GTK will hold a reference. */
 	g_object_unref (factory);
 	icons_registed = TRUE ;
+	Debug("%d ICON FILE LOADED!", icon_num);
 }
 
 
@@ -261,7 +272,7 @@ static GtkActionEntry entries[] = {
   { "Open", GTK_STOCK_OPEN,                    /* name, stock id */
     "_Open","<control>O",                      /* label, accelerator */
     "Open a file",                             /* tooltip */
-    G_CALLBACK (activate_action) },
+    G_CALLBACK (open_file_action) },
   { "Save", GTK_STOCK_SAVE,                    /* name, stock id */
     "_Save","<control>S",                      /* label, accelerator */
     "Save current file",                       /* tooltip */
@@ -278,7 +289,7 @@ static GtkActionEntry entries[] = {
     "_About", "<control>A",                    /* label, accelerator */
     "About",                                   /* tooltip */
     G_CALLBACK (activate_action) },
-  { "Logo", "demo-gtk-logo",                   /* name, stock id */
+  { "Logo", "SS_ICON_8",                       /* name, stock id */
      NULL, NULL,                               /* label, accelerator */
     "GTK+",                                    /* tooltip */
     G_CALLBACK (About_Message) },
@@ -385,8 +396,13 @@ void InitUserInterface()
     GtkWidget*  GridDataView;
     GtkWidget* GridDataFrame;
     GtkWidget*    ImageFrame;
-
+    GdkScreen*       screen;
     GError *error = NULL;
+    
+	screen = gdk_screen_get_default () ;
+    SCREEN_WIDTH = gdk_screen_get_width(screen)  ;
+	SCREEN_HEIGHT= gdk_screen_get_height(screen) ;
+	Debug( "screen   width %d, height %d" , SCREEN_WIDTH , SCREEN_HEIGHT) ;
     // init icons
     register_stock_icons ();
     // main window
@@ -401,7 +417,6 @@ void InitUserInterface()
     //gtk_window_fullscreen (GTK_WINDOW(WND)) ;
     //gtk_window_set_decorated (GTK_WINDOW(WND) , FALSE) ;
     g_signal_connect (G_OBJECT(WND), "destroy", G_CALLBACK(AppExit) , NULL) ;
-
 
     // Actions Intialize
     actions = gtk_action_group_new ("Actions");

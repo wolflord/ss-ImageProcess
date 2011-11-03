@@ -19,8 +19,6 @@ typedef struct  UserInterface
     GtkWidget* GridDataFrame;
 
 
-
-
     guint   TimerID[5]  ;
     PARA  para          ;
 }UI, *UI_P ;

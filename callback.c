@@ -77,7 +77,28 @@ void ImageViewMouseMove (GtkWidget* widget, GdkEvent* event, gpointer data)
 
 void ImageViewButtonClick (GtkWidget* widget, GdkEvent* event, gpointer data)
 {
-	Debug ("ImageViewButtonClick!") ;
+	int x  = event->button.x;
+	int y  = event->button.y;
+	int button = event->button.button ;
+	switch (button)
+	{
+		case 1:   // left button
+	       Debug ("ImageViewLeftButtonClick!") ;
+		   
+		   break;
+		case 2:   // scroll button
+		   Debug ("ImageViewScrollButtonClick!") ;
+		   
+		   break;
+		case 3:   // right button
+		   Debug ("ImageViewRightButtonClick!") ;
+		   
+		   break;
+		default:
+		   break;
+	}
+
+	Debug ("x-%d--y-%d", x, y ) ;
 }
 
 void ImageViewScrollEvent (GtkWidget* widget, GdkEvent* event, gpointer data)

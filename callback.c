@@ -36,24 +36,24 @@ void About_Message (GtkAction *action)
 
 void activate_action (GtkAction *action)
 {
-  g_message ("Action \"%s\" activated", gtk_action_get_name (action));
-  GtkWidget* dialog;
-  gint response ;
-  dialog = gtk_dialog_new();
-  //dialog = gtk_color_selection_dialog_new ("Changing color");
-  gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (p_ui->MainWnd));
-  gtk_widget_set_size_request (dialog, 280 , 120);
-  gtk_widget_show(dialog);
-  //  this function make the dialog to be do model
-  response = gtk_dialog_run (GTK_DIALOG (dialog));
+    g_message ("Action \"%s\" activated", gtk_action_get_name (action));
+    GtkWidget* dialog;
+    gint response ;
+    dialog = gtk_dialog_new();
+    //dialog = gtk_color_selection_dialog_new ("Changing color");
+    gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (p_ui->MainWnd));
+    gtk_widget_set_size_request (dialog, 280 , 120);
+    gtk_widget_show(dialog);
+    //  this function make the dialog to be do model
+    response = gtk_dialog_run (GTK_DIALOG (dialog));
 
-  if (response == GTK_RESPONSE_OK)
+    if (response == GTK_RESPONSE_OK)
     {
-        Debug ("GTK_RESPONSE_OK IS PRESSED!") ;
+	Debug ("GTK_RESPONSE_OK IS PRESSED!") ;
     }
 
-  gtk_widget_destroy (dialog);
-}
+    gtk_widget_destroy (dialog);
+    }
 
 void
 activate_radio_action (GtkAction *action, GtkRadioAction *current)
@@ -63,60 +63,73 @@ activate_radio_action (GtkAction *action, GtkRadioAction *current)
 }
 
 
-void 
+void
 open_file_action (GtkAction* action)
 {
-   Debug ("OPEN FILE ACTION!") ;
+    Debug ("OPEN FILE ACTION!") ;
 }
 
 
 void ImageViewMouseMove (GtkWidget* widget, GdkEvent* event, gpointer data)
 {
-	Debug ("ImageViewMouseMove") ;
+    Debug ("ImageViewMouseMove") ;
 }
 
 void ImageViewButtonClick (GtkWidget* widget, GdkEvent* event, gpointer data)
 {
-	int x  = event->button.x;
-	int y  = event->button.y;
-	int button = event->button.button ;
-	switch (button)
-	{
-		case 1:   // left button
+    int x  = event->button.x;
+    int y  = event->button.y;
+    int button = event->button.button ;
+    switch (button)
+    {
+	    case 1:   // left button
 	       Debug ("ImageViewLeftButtonClick!") ;
-		   
-		   break;
-		case 2:   // scroll button
-		   Debug ("ImageViewScrollButtonClick!") ;
-		   
-		   break;
-		case 3:   // right button
-		   Debug ("ImageViewRightButtonClick!") ;
-		   
-		   break;
-		default:
-		   break;
-	}
 
-	Debug ("x-%d--y-%d", x, y ) ;
+	       break;
+	    case 2:   // scroll button
+	       Debug ("ImageViewScrollButtonClick!") ;
+
+	       break;
+	    case 3:   // right button
+	       Debug ("ImageViewRightButtonClick!") ;
+
+	       break;
+	    default:
+	       break;
+    }
+
+    Debug ("x-%d--y-%d", x, y ) ;
 }
 
 void ImageViewScrollEvent (GtkWidget* widget, GdkEvent* event, gpointer data)
 {
-	Debug ("ImageViewScrollEvent!") ;
+    Debug ("ImageViewScrollEvent!") ;
 }
 
 void ImageViewRealizeEvent (GtkWidget* widget, GdkEvent* event, gpointer data)
 {
-	Debug ("ImageViewRealizeEvent!") ;
+    Debug ("ImageViewRealizeEvent!") ;
 }
 
 void ImageViewConfigEvent (GtkWidget* widget, GdkEvent* event, gpointer data)
 {
-	Debug ("ImageViewConfigEvent!") ;
+    Debug ("ImageViewConfigEvent!") ;
 }
 
-void ImageViewExposeEvent (GtkWidget* widget, GdkEvent* event, gpointer data)
+int ImageViewExposeEvent (GtkWidget* widget, GdkEventExpose *event, gpointer data)
 {
-	Debug ("ImageViewExposeEvent!") ;
+    unsigned char* pixels;
+    int rowstride;
+
+    rowstride = gdk_pixbuf_get_rowstride (p_ui->ImageViewBuff);
+    pixels = gdk_pixbuf_get_pixels (p_ui->ImageViewBuff) + rowstride * event->area.y + event->area.x * 3;
+
+    gdk_draw_rgb_image_dithalign (widget->window,
+				widget->style->black_gc,
+				event->area.x, event->area.y,
+				event->area.width, event->area.height,
+				GDK_RGB_DITHER_NORMAL,
+				pixels, rowstride,
+				event->area.x, event->area.y);
+    return TRUE;
 }

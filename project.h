@@ -55,22 +55,6 @@ extern void ImageViewButtonClick (GtkWidget* widget, GdkEvent* event, gpointer d
 extern void ImageViewScrollEvent (GtkWidget* widget, GdkEvent* event, gpointer data);
 extern void ImageViewRealizeEvent (GtkWidget* widget, GdkEvent* event, gpointer data);
 extern void ImageViewConfigEvent (GtkWidget* widget, GdkEvent* event, gpointer data);
-extern void ImageViewExposeEvent (GtkWidget* widget, GdkEvent* event, gpointer data);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+extern int  ImageViewExposeEvent (GtkWidget* widget, GdkEventExpose *event, gpointer data);
 
 #endif

@@ -17,8 +17,10 @@ typedef struct  UserInterface
     GtkWidget*  GridDataView;
     GtkWidget*    ImageFrame;
     GtkWidget* GridDataFrame;
+    GdkPixbuf* ImageViewBuff;
 
 
+    unsigned char*    pixels;
     guint   TimerID[5]  ;
     PARA  para          ;
 }UI, *UI_P ;

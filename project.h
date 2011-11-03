@@ -25,15 +25,15 @@
 //************************************
 // main.c
 //************************************
-extern UI ui;
+extern UI     ui;
 extern UI_P p_ui;
 
 
 //************************************
 // file_op.c
 //************************************
-extern int read_parameter_file(const char* filename, PARA_P file) ;
-extern int write_parameter_file(const char* filename, PARA_P file);
+extern int  read_parameter_file(const char* filename, PARA_P file) ;
+extern int  write_parameter_file(const char* filename, PARA_P file);
 
 //************************************
 // drawui.c
@@ -44,13 +44,18 @@ extern void InitUserInterface() ;
 // callback.c
 //************************************
 extern void AppExit (GtkWidget* widget, GdkEvent* event, gpointer data) ;
-extern int timmer_callback_1s (gpointer data) ;
-extern int AppIdleFunction (gpointer data)    ;
+extern int  timmer_callback_1s (gpointer data) ;
+extern int  AppIdleFunction (gpointer data)    ;
 extern void activate_action (GtkAction *action);
 extern void activate_radio_action (GtkAction *action, GtkRadioAction *current);
 extern void About_Message (GtkAction *action);
 extern void open_file_action(GtkAction* action) ;
-
+extern void ImageViewMouseMove (GtkWidget* widget, GdkEvent* event, gpointer data);
+extern void ImageViewButtonClick (GtkWidget* widget, GdkEvent* event, gpointer data);
+extern void ImageViewScrollEvent (GtkWidget* widget, GdkEvent* event, gpointer data);
+extern void ImageViewRealizeEvent (GtkWidget* widget, GdkEvent* event, gpointer data);
+extern void ImageViewConfigEvent (GtkWidget* widget, GdkEvent* event, gpointer data);
+extern void ImageViewExposeEvent (GtkWidget* widget, GdkEvent* event, gpointer data);
 
 
 

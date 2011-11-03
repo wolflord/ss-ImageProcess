@@ -70,3 +70,32 @@ open_file_action (GtkAction* action)
 }
 
 
+void ImageViewMouseMove (GtkWidget* widget, GdkEvent* event, gpointer data)
+{
+	Debug ("ImageViewMouseMove") ;
+}
+
+void ImageViewButtonClick (GtkWidget* widget, GdkEvent* event, gpointer data)
+{
+	Debug ("ImageViewButtonClick!") ;
+}
+
+void ImageViewScrollEvent (GtkWidget* widget, GdkEvent* event, gpointer data)
+{
+	Debug ("ImageViewScrollEvent!") ;
+}
+
+void ImageViewRealizeEvent (GtkWidget* widget, GdkEvent* event, gpointer data)
+{
+	Debug ("ImageViewRealizeEvent!") ;
+}
+
+void ImageViewConfigEvent (GtkWidget* widget, GdkEvent* event, gpointer data)
+{
+	Debug ("ImageViewConfigEvent!") ;
+}
+
+void ImageViewExposeEvent (GtkWidget* widget, GdkEvent* event, gpointer data)
+{
+	Debug ("ImageViewExposeEvent!") ;
+}

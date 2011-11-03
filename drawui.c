@@ -64,11 +64,6 @@ static void register_stock_icons (void)
 	/* Add our custom icon factory to the list of defaults */
 	factory = gtk_icon_factory_new ();
 	gtk_icon_factory_add_default (factory);
-
-	/* demo_find_file() looks in the current directory first,
-	* so you can run gtk-demo without installing GTK, then looks
-	* in the location where the file is installed.
-	*/
 	
 	for(i = 0 ; i< icon_num ; i++)
 	{
@@ -107,34 +102,22 @@ GtkWidget* OpenGLView()
 	gtk_container_add(GTK_CONTAINER(ImageFrame),ImageView);
 	gtk_widget_modify_bg (ImageView, GTK_STATE_NORMAL, &color_dark );
 
-	// Set OpenGL configure
-	//glconfig = gdk_gl_config_new_by_mode (GDK_GL_MODE_RGB    |
-	//                                   GDK_GL_MODE_DEPTH  |
-	//                                   GDK_GL_MODE_DOUBLE);
-
-	//* Set opengl to this screen
-	//gtk_widget_set_gl_capability (ImageView,
-	//                          glconfig,
-	//                           NULL,
-	//                           TRUE,
-	//                           GDK_GL_RGBA_TYPE);
-
 
 	// enable opengl view response signal
-	//gtk_widget_add_events ( ImageView,
-	//		 GDK_BUTTON_PRESS_MASK | GDK_SCROLL_MASK |GDK_BUTTON1_MOTION_MASK
-	//        |GDK_BUTTON3_MOTION_MASK );
+	gtk_widget_add_events ( ImageView,
+			 GDK_BUTTON_PRESS_MASK | GDK_SCROLL_MASK |GDK_BUTTON1_MOTION_MASK
+	        |GDK_BUTTON3_MOTION_MASK );
 
 	/* Connect signal handlers to the drawing area */
-	//g_signal_connect (G_OBJECT (ImageView), "motion_notify_event", G_CALLBACK (motion_notify_event), NULL);
-	//g_signal_connect (G_OBJECT (ImageView), "button_press_event", G_CALLBACK (button_press_event), NULL);
-	//g_signal_connect (G_OBJECT (ImageView), "scroll_event",G_CALLBACK (scroll_event), ImageView);
-	//  realize the widget (Create)
-	//g_signal_connect_after (G_OBJECT (ImageView), "realize", G_CALLBACK (realize), NULL);
+	g_signal_connect (G_OBJECT (ImageView), "motion_notify_event", G_CALLBACK (ImageViewMouseMove), NULL);
+	g_signal_connect (G_OBJECT (ImageView), "button_press_event", G_CALLBACK (ImageViewButtonClick), NULL);
+	g_signal_connect (G_OBJECT (ImageView), "scroll_event",G_CALLBACK (ImageViewScrollEvent), ImageView);
+    //realize the widget (Create)
+	g_signal_connect_after (G_OBJECT (ImageView), "realize", G_CALLBACK (ImageViewRealizeEvent), NULL);
 	//  pre set configure of widget (PreCreateWindow)
-	//g_signal_connect (G_OBJECT (ImageView), "configure_event", G_CALLBACK (configure_event), NULL);
+	g_signal_connect (G_OBJECT (ImageView), "configure_event", G_CALLBACK (ImageViewConfigEvent), NULL);
 	//  expose event is actually a redraw signal after redraw requirement is triger  (OnDraw)
-	//g_signal_connect (G_OBJECT (ImageView), "expose_event", G_CALLBACK (expose_event), NULL);
+	g_signal_connect (G_OBJECT (ImageView), "expose_event", G_CALLBACK (ImageViewExposeEvent), NULL);
 	//g_signal_connect_swapped (G_OBJECT (MainFrame), "key_press_event", G_CALLBACK (key_press_event), ImageView);
 
     return ImageFrame;
@@ -219,16 +202,21 @@ GtkWidget* CreateLeftStockBar()
 	GtkWidget* notebook;
 	GtkWidget* label;
 	GtkWidget* frame;
+	int size_x ;
+	int size_y ;
 
+	size_x = SCREEN_WIDTH>1024 ? 300 : (SCREEN_WIDTH  / 4 ) ;
+    size_y = SCREEN_HEIGHT / 2 ;
 	notebook = gtk_notebook_new ();
     gtk_notebook_set_tab_pos (GTK_NOTEBOOK (notebook), GTK_POS_TOP);
-    gtk_widget_set_size_request(notebook, 300, 500);
+    gtk_widget_set_size_request(notebook, size_x, size_y);
     gtk_widget_show (notebook);
 
     /* add some pages into the notebook */
 
-    frame = gtk_frame_new ("Hardware");
-    gtk_container_set_border_width (GTK_CONTAINER (frame), 5);
+    //frame = gtk_frame_new ("Hardware");
+    frame = gtk_frame_new (NULL);
+	gtk_container_set_border_width (GTK_CONTAINER (frame), 5);
     gtk_widget_show (frame);
 
     label = gtk_label_new ("Hardware");
@@ -238,7 +226,7 @@ GtkWidget* CreateLeftStockBar()
     label = gtk_label_new ( "Hardware");
     gtk_notebook_append_page (GTK_NOTEBOOK (notebook), frame, label);
 
-    frame = gtk_frame_new ("Bean");
+    frame = gtk_frame_new (NULL);
     gtk_container_set_border_width (GTK_CONTAINER (frame), 5);
     gtk_widget_show (frame);
     label = gtk_label_new ("Bean");
@@ -246,7 +234,7 @@ GtkWidget* CreateLeftStockBar()
     gtk_widget_show (label);
     label = gtk_label_new ("Bean");
     gtk_notebook_append_page (GTK_NOTEBOOK (notebook), frame, label);
-    frame = gtk_frame_new ("Specimen");
+    frame = gtk_frame_new (NULL);
     gtk_container_set_border_width (GTK_CONTAINER (frame), 5);
     gtk_widget_show (frame);
     label = gtk_label_new ("Specimen");
@@ -285,7 +273,7 @@ static GtkActionEntry entries[] = {
     "_Quit", "<control>Q",                     /* label, accelerator */
     "Quit",                                    /* tooltip */
     G_CALLBACK (activate_action) },
-  { "About", NULL,                             /* name, stock id */
+  { "About", "SS_ICON_9",                             /* name, stock id */
     "_About", "<control>A",                    /* label, accelerator */
     "About",                                   /* tooltip */
     G_CALLBACK (activate_action) },
@@ -377,6 +365,7 @@ static const gchar *ui_info =
 "    <toolitem action='Quit'/>"
 "    <separator action='Sep1'/>"
 "    <toolitem action='Logo'/>"
+"    <toolitem action ='About'/>"   
 "  </toolbar>"
 "</ui>";
 
@@ -396,19 +385,19 @@ void InitUserInterface()
     GtkWidget*  GridDataView;
     GtkWidget* GridDataFrame;
     GtkWidget*    ImageFrame;
-    GdkScreen*       screen;
+    GdkScreen*        screen;
     GError *error = NULL;
     
 	screen = gdk_screen_get_default () ;
     SCREEN_WIDTH = gdk_screen_get_width(screen)  ;
 	SCREEN_HEIGHT= gdk_screen_get_height(screen) ;
 	Debug( "screen   width %d, height %d" , SCREEN_WIDTH , SCREEN_HEIGHT) ;
-    // init icons
+    /*init icons*/
     register_stock_icons ();
-    // main window
+    /* main window */
     WND = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_widget_set_size_request (WND , 800 , 600) ;
-    gtk_window_set_title (GTK_WINDOW(WND), "UltraSonic");
+    gtk_window_set_title (GTK_WINDOW(WND), "ImageProcessing");
     gtk_widget_modify_bg (WND , GTK_STATE_NORMAL, &color_black ) ;
     gtk_window_set_icon_from_file (GTK_WINDOW(WND),"res/OPMS.ico",NULL) ;
     /* Get automatically redrawn if any of their children changed allocation. */
@@ -445,8 +434,8 @@ void InitUserInterface()
 
     if (!gtk_ui_manager_add_ui_from_string (ui, ui_info, -1, &error))
 	{
-	  g_message ("building menus failed: %s", error->message);
-	  g_error_free (error);
+	   g_message ("building menus failed: %s", error->message);
+	   g_error_free (error);
 	}
 
     MainBox = gtk_vbox_new (FALSE, 0);

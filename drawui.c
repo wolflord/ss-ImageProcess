@@ -106,7 +106,7 @@ GtkWidget* OpenGLView()
 	// enable view response signal
 	gtk_widget_add_events ( ImageView,
 			 GDK_BUTTON_PRESS_MASK | GDK_SCROLL_MASK | GDK_BUTTON1_MOTION_MASK
-	        |GDK_BUTTON3_MOTION_MASK );   
+	         |GDK_BUTTON3_MOTION_MASK );   
     // GDK_POINTER_MOTION_HINT_MASK is Mouse move event , but is reduce the message sending frequency
 	/* Connect signal handlers to the drawing area */
 	g_signal_connect (G_OBJECT (ImageView), "motion_notify_event", G_CALLBACK (ImageViewMouseMove), NULL);

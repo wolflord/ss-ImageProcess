@@ -33,59 +33,59 @@ int SCREEN_HEIGHT = 0;
 
 static void register_stock_icons (void)
 {
-	GdkPixbuf *pixbuf;
-	GtkIconFactory *factory;
+    GdkPixbuf *pixbuf;
+    GtkIconFactory *factory;
     GtkIconSet *icon_set;
-	GdkPixbuf *transparent;
-	char *filename;
+    GdkPixbuf *transparent;
+    char *filename;
     int icon_num ;
-	int i ; 
-	// if the icons is registed
+    int i ;
+    // if the icons is registed
     // return
     static gboolean icons_registed = FALSE ;
     if(icons_registed)  return ;
 
-	//static GtkStockItem items[] = {
-	//{ "demo-gtk-logo",
-	//  "Help",
-	//  0, 0, NULL }
-	//};
+    //static GtkStockItem items[] = {
+    //{ "demo-gtk-logo",
+    //  "Help",
+    //  0, 0, NULL }
+    //};
     icon_num = sizeof(icons) / sizeof(ICON_FILE) ;
     GtkStockItem* items = (GtkStockItem*) malloc (sizeof(GtkStockItem) * icon_num) ;
     memset( items , 0 , sizeof(GtkStockItem)* icon_num ) ;
-	for(i = 0 ; i< icon_num ; i++ )
-	{
-		items[i].stock_id = icons[i].id ;
-		items[i].label    = icons[i].label ;
-	}
+    for(i = 0 ; i< icon_num ; i++ )
+    {
+	    items[i].stock_id = icons[i].id ;
+	    items[i].label    = icons[i].label ;
+    }
 
-	/* Register our stock items */
-	gtk_stock_add (items, icon_num);
-	/* Add our custom icon factory to the list of defaults */
-	factory = gtk_icon_factory_new ();
-	gtk_icon_factory_add_default (factory);
-	
-	for(i = 0 ; i< icon_num ; i++)
-	{
-		filename = icons[i].filename ;
-		pixbuf = gdk_pixbuf_new_from_file (filename , NULL);
-		if(pixbuf == NULL) {  
-		    printf("Error!--load icon file fail!\n") ;
-			continue ;
-		}
+    /* Register our stock items */
+    gtk_stock_add (items, icon_num);
+    /* Add our custom icon factory to the list of defaults */
+    factory = gtk_icon_factory_new ();
+    gtk_icon_factory_add_default (factory);
 
-    	transparent = gdk_pixbuf_add_alpha (pixbuf, TRUE, 0xff, 0xff, 0xff);
-	    icon_set = gtk_icon_set_new_from_pixbuf (transparent);
-	    gtk_icon_factory_add (factory, icons[i].id , icon_set);
-	    gtk_icon_set_unref (icon_set);
-	    g_object_unref (pixbuf);
-	    g_object_unref (transparent);
-	}
-	
-	/* Drop our reference to the factory, GTK will hold a reference. */
-	g_object_unref (factory);
-	icons_registed = TRUE ;
-	Debug("%d ICON FILE LOADED!", icon_num);
+    for(i = 0 ; i< icon_num ; i++)
+    {
+	    filename = icons[i].filename ;
+	    pixbuf = gdk_pixbuf_new_from_file (filename , NULL);
+	    if(pixbuf == NULL) {
+		printf("Error!--load icon file fail!\n") ;
+		    continue ;
+	    }
+
+    transparent = gdk_pixbuf_add_alpha (pixbuf, TRUE, 0xff, 0xff, 0xff);
+	icon_set = gtk_icon_set_new_from_pixbuf (transparent);
+	gtk_icon_factory_add (factory, icons[i].id , icon_set);
+	gtk_icon_set_unref (icon_set);
+	g_object_unref (pixbuf);
+	g_object_unref (transparent);
+    }
+
+    /* Drop our reference to the factory, GTK will hold a reference. */
+    g_object_unref (factory);
+    icons_registed = TRUE ;
+    Debug("%d ICON FILE LOADED!", icon_num);
 }
 
 
@@ -93,121 +93,124 @@ GtkWidget* OpenGLView()
 {
     GtkWidget *ImageView;
     GtkWidget *ImageFrame;
+    GdkPixbuf *ImageViewBuff ;
+    unsigned char* pixels ;
+    int size_x = SCREEN_WIDTH;
+    int size_y = SCREEN_HEIGHT;
 
     // create opengl view
     ImageView = gtk_drawing_area_new();
-	gtk_widget_set_size_request(ImageView,640,480);
-	ImageFrame = gtk_frame_new (NULL);
-	gtk_frame_set_shadow_type (GTK_FRAME(ImageFrame),GTK_SHADOW_IN) ;
-	gtk_container_add(GTK_CONTAINER(ImageFrame),ImageView);
-	gtk_widget_modify_bg (ImageView, GTK_STATE_NORMAL, &color_dark );
+    ImageFrame = gtk_frame_new (NULL);
+    gtk_frame_set_shadow_type (GTK_FRAME(ImageFrame),GTK_SHADOW_IN) ;
+    gtk_container_add(GTK_CONTAINER(ImageFrame),ImageView);
+    gtk_widget_modify_bg (ImageView, GTK_STATE_NORMAL, &color_dark );
+
+    ImageViewBuff = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, size_x, size_y);
+    pixels = gdk_pixbuf_get_pixels (ImageViewBuff) ;
 
 
-	// enable view response signal
-	gtk_widget_add_events ( ImageView,
-			 GDK_BUTTON_PRESS_MASK | GDK_SCROLL_MASK | GDK_BUTTON1_MOTION_MASK
-	         |GDK_BUTTON3_MOTION_MASK );   
     // GDK_POINTER_MOTION_HINT_MASK is Mouse move event , but is reduce the message sending frequency
-	/* Connect signal handlers to the drawing area */
-	g_signal_connect (G_OBJECT (ImageView), "motion_notify_event", G_CALLBACK (ImageViewMouseMove), NULL);
-	g_signal_connect (G_OBJECT (ImageView), "button_press_event", G_CALLBACK (ImageViewButtonClick), NULL);
-	g_signal_connect (G_OBJECT (ImageView), "scroll_event",G_CALLBACK (ImageViewScrollEvent), ImageView);
+    /* Connect signal handlers to the drawing area */
+    g_signal_connect (G_OBJECT (ImageView), "motion_notify_event", G_CALLBACK (ImageViewMouseMove), NULL);
+    g_signal_connect (G_OBJECT (ImageView), "button_press_event", G_CALLBACK (ImageViewButtonClick), NULL);
+    g_signal_connect (G_OBJECT (ImageView), "scroll_event",G_CALLBACK (ImageViewScrollEvent), ImageView);
     //realize the widget (Create)
-	g_signal_connect_after (G_OBJECT (ImageView), "realize", G_CALLBACK (ImageViewRealizeEvent), NULL);
-	//  pre set configure of widget (PreCreateWindow)
-	g_signal_connect (G_OBJECT (ImageView), "configure_event", G_CALLBACK (ImageViewConfigEvent), NULL);
-	//  expose event is actually a redraw signal after redraw requirement is triger  (OnDraw)
-	g_signal_connect (G_OBJECT (ImageView), "expose_event", G_CALLBACK (ImageViewExposeEvent), NULL);
-	//g_signal_connect_swapped (G_OBJECT (MainFrame), "key_press_event", G_CALLBACK (key_press_event), ImageView);
+    g_signal_connect_after (G_OBJECT (ImageView), "realize", G_CALLBACK (ImageViewRealizeEvent), NULL);
+    //  pre set configure of widget (PreCreateWindow)
+    g_signal_connect (G_OBJECT (ImageView), "configure_event", G_CALLBACK (ImageViewConfigEvent), NULL);
+    //  expose event is actually a redraw signal after redraw requirement is triger  (OnDraw)
+    g_signal_connect (G_OBJECT (ImageView), "expose_event", G_CALLBACK (ImageViewExposeEvent), NULL);
+    //g_signal_connect_swapped (G_OBJECT (MainFrame), "key_press_event", G_CALLBACK (key_press_event), ImageView);
 
+
+    p_ui->ImageViewBuff = ImageViewBuff ;
+    p_ui->pixels = pixels ;
     return ImageFrame;
 }
 
 
 GtkWidget* CreateDataView()
 {
-	  GtkWidget* sw;
-	  GtkWidget *DataView;
-      GtkTreeModel *model = NULL;
-	  GtkTreeViewColumn *column;
-	  GtkCellRenderer *cell_renderer;
+    GtkWidget* sw;
+    GtkWidget *DataView;
+    GtkTreeModel *model = NULL;
+    GtkTreeViewColumn *column;
+    GtkCellRenderer *cell_renderer;
 
-	  sw = gtk_scrolled_window_new (NULL, NULL);
-      gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
-                                      GTK_POLICY_NEVER,
-                                      GTK_POLICY_AUTOMATIC);
+    sw = gtk_scrolled_window_new (NULL, NULL);
+    gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (sw),
+			      GTK_POLICY_NEVER,
+			      GTK_POLICY_AUTOMATIC);
 
-      //model = create_model ();
+    //model = create_model ();
+    DataView = gtk_tree_view_new_with_model (model);
+    //g_object_unref (model);
 
-      DataView = gtk_tree_view_new_with_model (model);
+    gtk_container_add (GTK_CONTAINER (sw), DataView);
 
-      //g_object_unref (model);
+    column = gtk_tree_view_column_new ();
+    gtk_tree_view_column_set_title (column, "Macro");
 
-      gtk_container_add (GTK_CONTAINER (sw), DataView);
+    cell_renderer = gtk_cell_renderer_text_new ();
+    gtk_tree_view_column_pack_start (column,
+				   cell_renderer,
+				   FALSE);
+    gtk_tree_view_column_set_attributes (column, cell_renderer,
+				       "stock_id", 1, NULL);
+    cell_renderer = gtk_cell_renderer_text_new ();
+    gtk_tree_view_column_pack_start (column,
+				   cell_renderer,
+				   TRUE);
+    gtk_tree_view_column_set_cell_data_func (column, cell_renderer,
+					   NULL, NULL, NULL);
 
-      column = gtk_tree_view_column_new ();
-      gtk_tree_view_column_set_title (column, "Macro");
+    gtk_tree_view_append_column (GTK_TREE_VIEW (DataView),
+			       column);
 
-      cell_renderer = gtk_cell_renderer_text_new ();
-      gtk_tree_view_column_pack_start (column,
-				       cell_renderer,
-				       FALSE);
-      gtk_tree_view_column_set_attributes (column, cell_renderer,
-					   "stock_id", 1, NULL);
-      cell_renderer = gtk_cell_renderer_text_new ();
-      gtk_tree_view_column_pack_start (column,
-				       cell_renderer,
-				       TRUE);
-      gtk_tree_view_column_set_cell_data_func (column, cell_renderer,
-					       NULL, NULL, NULL);
+    cell_renderer = gtk_cell_renderer_text_new ();
+    gtk_tree_view_insert_column_with_data_func (GTK_TREE_VIEW (DataView),
+					      -1,
+					      "Label",
+					      cell_renderer,
+					      NULL,
+					      NULL,
+					      NULL);
 
-      gtk_tree_view_append_column (GTK_TREE_VIEW (DataView),
-				   column);
+    cell_renderer = gtk_cell_renderer_text_new ();
+    gtk_tree_view_insert_column_with_data_func (GTK_TREE_VIEW (DataView),
+					      -1,
+					      "Accel",
+					      cell_renderer,
+					      NULL,
+					      NULL,
+					      NULL);
 
-      cell_renderer = gtk_cell_renderer_text_new ();
-      gtk_tree_view_insert_column_with_data_func (GTK_TREE_VIEW (DataView),
-                                                  -1,
-                                                  "Label",
-                                                  cell_renderer,
-                                                  NULL,
-                                                  NULL,
-                                                  NULL);
+    cell_renderer = gtk_cell_renderer_text_new ();
+    gtk_tree_view_insert_column_with_data_func (GTK_TREE_VIEW (DataView),
+					      -1,
+					      "ID",
+					      cell_renderer,
+					      NULL,
+					      NULL,
+					      NULL);
 
-      cell_renderer = gtk_cell_renderer_text_new ();
-      gtk_tree_view_insert_column_with_data_func (GTK_TREE_VIEW (DataView),
-                                                  -1,
-                                                  "Accel",
-                                                  cell_renderer,
-                                                  NULL,
-                                                  NULL,
-                                                  NULL);
-
-      cell_renderer = gtk_cell_renderer_text_new ();
-      gtk_tree_view_insert_column_with_data_func (GTK_TREE_VIEW (DataView),
-                                                  -1,
-                                                  "ID",
-                                                  cell_renderer,
-                                                  NULL,
-                                                  NULL,
-                                                  NULL);
-
-      gtk_widget_set_size_request (sw, 600, 200);
-	  return sw;
+    gtk_widget_set_size_request (sw, 600, 200);
+      return sw;
 }
 //************************************
 // Create Left stock bar window
 //************************************
 GtkWidget* CreateLeftStockBar()
 {
-	GtkWidget* notebook;
-	GtkWidget* label;
-	GtkWidget* frame;
-	int size_x ;
-	int size_y ;
+    GtkWidget* notebook;
+    GtkWidget* label;
+    GtkWidget* frame;
+    int size_x ;
+    int size_y ;
 
-	size_x = SCREEN_WIDTH>1024 ? 300 : (SCREEN_WIDTH  / 4 ) ;
+    size_x = SCREEN_WIDTH>1024 ? 300 : (SCREEN_WIDTH  / 4 ) ;
     size_y = SCREEN_HEIGHT / 2 ;
-	notebook = gtk_notebook_new ();
+    notebook = gtk_notebook_new ();
     gtk_notebook_set_tab_pos (GTK_NOTEBOOK (notebook), GTK_POS_TOP);
     gtk_widget_set_size_request(notebook, size_x, size_y);
     gtk_widget_show (notebook);
@@ -365,7 +368,7 @@ static const gchar *ui_info =
 "    <toolitem action='Quit'/>"
 "    <separator action='Sep1'/>"
 "    <toolitem action='Logo'/>"
-"    <toolitem action ='About'/>"   
+"    <toolitem action ='About'/>"
 "  </toolbar>"
 "</ui>";
 
@@ -387,7 +390,7 @@ void InitUserInterface()
     GtkWidget*    ImageFrame;
     GdkScreen*        screen;
     GError *error = NULL;
-    
+
 	screen = gdk_screen_get_default () ;
     SCREEN_WIDTH = gdk_screen_get_width(screen)  ;
 	SCREEN_HEIGHT= gdk_screen_get_height(screen) ;

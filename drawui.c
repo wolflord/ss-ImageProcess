@@ -108,7 +108,8 @@ GtkWidget* OpenGLView()
     ImageViewBuff = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, size_x, size_y);
     pixels = gdk_pixbuf_get_pixels (ImageViewBuff) ;
 
-
+    gtk_widget_add_events ( ImageView,
+			GDK_BUTTON_PRESS_MASK | GDK_SCROLL_MASK | GDK_BUTTON1_MOTION_MASK | GDK_BUTTON3_MOTION_MASK );
     // GDK_POINTER_MOTION_HINT_MASK is Mouse move event , but is reduce the message sending frequency
     /* Connect signal handlers to the drawing area */
     g_signal_connect (G_OBJECT (ImageView), "motion_notify_event", G_CALLBACK (ImageViewMouseMove), NULL);
@@ -401,7 +402,7 @@ void InitUserInterface()
     WND = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_widget_set_size_request (WND , 800 , 600) ;
     gtk_window_set_title (GTK_WINDOW(WND), "ImageProcessing");
-    gtk_widget_modify_bg (WND , GTK_STATE_NORMAL, &color_black ) ;
+    gtk_widget_modify_bg (WND , GTK_STATE_NORMAL, &color_yellow ) ;
     gtk_window_set_icon_from_file (GTK_WINDOW(WND),"res/OPMS.ico",NULL) ;
     /* Get automatically redrawn if any of their children changed allocation. */
     gtk_container_set_reallocate_redraws (GTK_CONTAINER (WND), TRUE);

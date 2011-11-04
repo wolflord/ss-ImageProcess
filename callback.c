@@ -123,13 +123,13 @@ int ImageViewExposeEvent (GtkWidget* widget, GdkEventExpose *event, gpointer dat
 
     rowstride = gdk_pixbuf_get_rowstride (p_ui->ImageViewBuff);
     pixels = gdk_pixbuf_get_pixels (p_ui->ImageViewBuff) + rowstride * event->area.y + event->area.x * 3;
-
+    
     gdk_draw_rgb_image_dithalign (widget->window,
 				widget->style->black_gc,
 				event->area.x, event->area.y,
 				event->area.width, event->area.height,
 				GDK_RGB_DITHER_NORMAL,
 				pixels, rowstride,
-				event->area.x, event->area.y);
+				event->area.x , event->area.y);
     return TRUE;
 }

@@ -4,6 +4,32 @@
 #include <gtk/gtk.h>
 #include "defines.h"
 
+#define SETTING_BUTTON_LABEL_LENGTH 30 
+#define SETTING_BUTTON_STEP_COUNT   5
+
+
+typedef struct _SETTING_BUTTON
+{
+    GtkWidget* button   ;
+
+    char   Label[SETTING_BUTTON_LABEL_LENGTH] ;
+    int    Width        ;
+    int    Height       ;
+    int    ButtonCondtion;
+    
+    double MinValue     ;
+    double MaxValue     ;
+    double CurrentValue ;
+    double StepValue[SETTING_BUTTON_STEP_COUNT] ;
+    int    StepSlected  ; 
+    int  DecimalDisplay ;
+    
+    char*  Bgroud       ;
+    char*  Fgroud       ;
+    
+}SETTING_BUTTON , *SETTING_BUTTON_P  ;
+
+
 typedef struct  UserInterface
 {
     GtkWidget*       MainWnd;

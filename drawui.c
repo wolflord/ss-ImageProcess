@@ -91,12 +91,14 @@ static void register_stock_icons (void)
 
 GtkWidget* OpenGLView()
 {
+    int i;
+    int j;
     GtkWidget *ImageView;
     GtkWidget *ImageFrame;
     GdkPixbuf *ImageViewBuff ;
     unsigned char* pixels ;
-    int size_x = SCREEN_WIDTH;
-    int size_y = SCREEN_HEIGHT;
+    int size_x  = SCREEN_WIDTH;
+    int size_y  = SCREEN_HEIGHT;
 
     // create opengl view
     ImageView = gtk_drawing_area_new();
@@ -104,9 +106,18 @@ GtkWidget* OpenGLView()
     gtk_frame_set_shadow_type (GTK_FRAME(ImageFrame),GTK_SHADOW_IN) ;
     gtk_container_add(GTK_CONTAINER(ImageFrame),ImageView);
     gtk_widget_modify_bg (ImageView, GTK_STATE_NORMAL, &color_dark );
-
+    
     ImageViewBuff = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, size_x, size_y);
     pixels = gdk_pixbuf_get_pixels (ImageViewBuff) ;
+    
+    for(i = 0 ; i < 100 ; i += 10)
+    {
+        for(j= 0 ; j < 5 ; j++)
+        {
+           memset((void*)(pixels + (i+j)*SCREEN_WIDTH*3 ), 200 , SCREEN_WIDTH );
+        }             
+    }
+    
 
     gtk_widget_add_events ( ImageView,
 			GDK_BUTTON_PRESS_MASK | GDK_SCROLL_MASK | GDK_BUTTON1_MOTION_MASK | GDK_BUTTON3_MOTION_MASK );

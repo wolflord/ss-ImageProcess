@@ -40,6 +40,7 @@ typedef struct _SETTING_BUTTON
 
     GdkEventType  EventMark;
     void*  CallBackFunc ;
+    int   CurrentStatus ;
 
 }SETTING_BUTTON , *SETTING_BUTTON_P  ;
 

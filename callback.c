@@ -1,5 +1,25 @@
 #include "project.h"
 
+
+void SettingButtonCallBackFunc0(GtkWidget* widget, GdkEvent* event, gpointer data) ;
+void SettingButtonCallBackFunc1(GtkWidget* widget, GdkEvent* event, gpointer data) ;
+void SettingButtonCallBackFunc2(GtkWidget* widget, GdkEvent* event, gpointer data) ;
+void SettingButtonCallBackFunc3(GtkWidget* widget, GdkEvent* event, gpointer data) ;
+void SettingButtonCallBackFunc4(GtkWidget* widget, GdkEvent* event, gpointer data) ;
+void SettingButtonCallBackFunc5(GtkWidget* widget, GdkEvent* event, gpointer data) ;
+
+
+void (*SettingButtonCallBackFunc[6])(GtkWidget* widget, GdkEvent* event, gpointer data) =
+{
+	SettingButtonCallBackFunc0,
+	SettingButtonCallBackFunc1,
+	SettingButtonCallBackFunc2,
+	SettingButtonCallBackFunc3,
+	SettingButtonCallBackFunc4,
+	SettingButtonCallBackFunc5
+};
+
+
 void AppExit (GtkWidget* widget, GdkEvent* event, gpointer data)
 {
     Debug("Main Function Exit!") ;
@@ -19,19 +39,60 @@ int AppIdleFunction (gpointer data)
     return 0 ;
 }
 
-void AboutMessage (GtkAction *action)
+void SettingButtonCallBackFunc0(GtkWidget* widget, GdkEvent* event, gpointer data)
+{
+    Debug("SettingButtonCallBackFunc0");
+
+    SETTING_BUTTON_P button = (SETTING_BUTTON_P) data ;
+    if(button->CurrentStatus)
+    {
+        button->Markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>%s</span>", "TTTTT!");
+	//gtk_label_set_markup(GTK_LABEL(button->Label) , button->Markup);
+	button->CurrentStatus = 0 ;
+    }
+    else
+    {
+        button->Markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>%s</span>", "HELLO!");
+	//gtk_label_set_markup(GTK_LABEL(button->Label) , button->Markup);
+	button->CurrentStatus = 1 ;
+    }
+
+}
+
+void SettingButtonCallBackFunc1(GtkWidget* widget, GdkEvent* event, gpointer data)
 {
 
-  GtkWidget *dialog;
-  dialog = gtk_message_dialog_new (GTK_WINDOW (p_ui->MainWnd),
+}
+void SettingButtonCallBackFunc2(GtkWidget* widget, GdkEvent* event, gpointer data)
+{
+
+}
+void SettingButtonCallBackFunc3(GtkWidget* widget, GdkEvent* event, gpointer data)
+{
+
+}
+void SettingButtonCallBackFunc4(GtkWidget* widget, GdkEvent* event, gpointer data)
+{
+
+}
+void SettingButtonCallBackFunc5(GtkWidget* widget, GdkEvent* event, gpointer data)
+{
+
+}
+
+
+void AboutMessage (GtkAction *action)
+{
+    GtkWidget *dialog;
+    dialog = gtk_message_dialog_new (GTK_WINDOW (p_ui->MainWnd),
 				   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
 				   GTK_MESSAGE_INFO,
 				   GTK_BUTTONS_OK,
 				   "This Application Interface is Created by\n"
 				   "WolfLord 20110101");
 
-  gtk_dialog_run (GTK_DIALOG (dialog));
-  gtk_widget_destroy (dialog);
+    gtk_dialog_run (GTK_DIALOG (dialog));
+    gtk_widget_destroy (dialog);
 }
 
 void ActivateAction (GtkAction *action)
@@ -57,7 +118,7 @@ void ActivateAction (GtkAction *action)
 
 void ActivateRadioAction (GtkAction *action, GtkRadioAction *current)
 {
-  g_message ("Radio action \"%s\" selected",
+    g_message ("Radio action \"%s\" selected",
 	     gtk_action_get_name (GTK_ACTION (current)));
 }
 
@@ -148,7 +209,7 @@ int ImageViewExposeEvent (GtkWidget* widget, GdkEventExpose *event, gpointer dat
 
 void callbackfunc(GtkWidget* widget , GdkEvent* event , gpointer data)
 {
-      Debu("callbackfun!");
+    Debug("callbackfun!");
 }
 
 void EventBoxTest (GtkAction* action)
@@ -156,10 +217,16 @@ void EventBoxTest (GtkAction* action)
     Debug("EventBox test!!!") ;
     GtkWidget* window;
     SETTING_BUTTON button ;
-    window = gtk_window_new(GTK_WINDOW_POPUP);
+    window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
     button.Markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>%s</span>", "HELLO!");
     button.EventMark = GDK_BUTTON_PRESS_MASK ;
-    //button.CallBackFunc = (void*) callbackfunc ;
+    button.CallBackFunc =  SettingButtonCallBackFunc[0];
+    button.Width = 100 ;
+    button.Height= 100 ;
+    CreateSettingButton(&button) ;
+
+    gtk_container_add(GTK_CONTAINER(window) , button.Button) ;
+    gtk_widget_show_all(window) ;
 
 }

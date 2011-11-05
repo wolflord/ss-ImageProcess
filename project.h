@@ -41,6 +41,7 @@ extern int  write_parameter_file(const char* filename, PARA_P file);
 //************************************
 extern void InitUserInterface() ;
 extern void SetWidgetBackGroud(GtkWidget *widget,GdkPixbuf* image) ;
+extern int CreateSettingButton(SETTING_BUTTON_P button) ;
 //************************************
 // callback.c
 //************************************
@@ -58,4 +59,10 @@ extern void ImageViewRealizeEvent (GtkWidget* widget, GdkEvent* event, gpointer 
 extern void ImageViewConfigEvent (GtkWidget* widget, GdkEvent* event, gpointer data);
 extern int  ImageViewExposeEvent (GtkWidget* widget, GdkEventExpose *event, gpointer data);
 extern void EventBoxTest (GtkAction* action) ;
+extern void SettingButtonCallBackFunc0 (GtkWidget* widget, GdkEvent* event, gpointer data) ;
+extern void SettingButtonCallBackFunc1 (GtkWidget* widget, GdkEvent* event, gpointer data) ;
+extern void SettingButtonCallBackFunc2 (GtkWidget* widget, GdkEvent* event, gpointer data) ;
+extern void SettingButtonCallBackFunc3 (GtkWidget* widget, GdkEvent* event, gpointer data) ;
+extern void SettingButtonCallBackFunc4 (GtkWidget* widget, GdkEvent* event, gpointer data) ;
+extern void SettingButtonCallBackFunc5 (GtkWidget* widget, GdkEvent* event, gpointer data) ;
 #endif

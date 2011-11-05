@@ -117,7 +117,6 @@ GtkWidget* OpenGLView()
         }
     }
 
-
     gtk_widget_add_events ( ImageView,
 			GDK_BUTTON_PRESS_MASK | GDK_SCROLL_MASK | GDK_BUTTON1_MOTION_MASK | GDK_BUTTON3_MOTION_MASK );
     // GDK_POINTER_MOTION_HINT_MASK is Mouse move event , but is reduce the message sending frequency
@@ -500,39 +499,42 @@ void InitUserInterface()
 int CreateSettingButton(SETTING_BUTTON_P button)
 {
     button->Button = gtk_event_box_new() ;
+    if(button->Width != 0 && button->Height != 0 )
     gtk_widget_set_size_request( button->Button , button->Width , button->Height) ;
 
     gtk_widget_add_events (button->Button , button->EventMark ) ;
-    g_signal_connect (G_OBJECT(button->Button) , "button_press_event" ,G_CALLBACK(button->CallBackFunc) , NULL) ;
+    g_signal_connect (G_OBJECT(button->Button) , "button_press_event" ,G_CALLBACK(button->CallBackFunc) , button) ;
 
     button->Label = gtk_label_new(NULL) ;
     gtk_label_set_markup(GTK_LABEL(button->Label) , button->Markup);
+
+    gtk_container_add(GTK_CONTAINER(button->Button) , button->Label) ;
 
     return 0;
 }
 
 void SetWidgetBackGroud(GtkWidget *widget,GdkPixbuf* image)
 {
-	GtkStyle *style;
-	GdkPixmap *pixmap;
-	GdkColormap *colormap;
+    GtkStyle *style;
+    GdkPixmap *pixmap;
+    GdkColormap *colormap;
 
-	int alpha_threshold = 0;
+    int alpha_threshold = 0;
 
-	colormap = gdk_colormap_get_system ();
-        gdk_pixbuf_render_pixmap_and_mask_for_colormap(image,
-			colormap, &pixmap, NULL, alpha_threshold);
+    colormap = gdk_colormap_get_system ();
+    gdk_pixbuf_render_pixmap_and_mask_for_colormap(image,
+		    colormap, &pixmap, NULL, alpha_threshold);
 
-	style = gtk_style_copy(widget->style);
+    style = gtk_style_copy(widget->style);
 
-	if (style->bg_pixmap[GTK_STATE_NORMAL])
-	{
-		g_object_unref(style->bg_pixmap[GTK_STATE_NORMAL]);
-	}
+    if (style->bg_pixmap[GTK_STATE_NORMAL])
+    {
+	    g_object_unref(style->bg_pixmap[GTK_STATE_NORMAL]);
+    }
 
-	style->bg_pixmap[GTK_STATE_NORMAL] = (pixmap);
-	gtk_widget_set_style( widget, style);
-	g_object_unref(style);
+    style->bg_pixmap[GTK_STATE_NORMAL] = (pixmap);
+    gtk_widget_set_style( widget, style);
+    g_object_unref(style);
 
 }
 

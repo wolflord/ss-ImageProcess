@@ -8,9 +8,9 @@ int read_parameter_file(const char* filename, PARA_P file)
     id = fopen(filename , "r") ;
     if(id)
     {
-		ret = fread((void*)file,  1 ,sizeof(PARA) , id) ;
-		fclose(id);
-		if(ret !=  sizeof(PARA))  return -1 ;
+	ret = fread((void*)file,  1 ,sizeof(PARA) , id) ;
+	fclose(id);
+	if(ret !=  sizeof(PARA))  return -1 ;
     }
     else
     {
@@ -27,9 +27,9 @@ int write_parameter_file(const char* filename, PARA_P file)
     id = fopen(filename , "w") ;
     if(id)
     {
-        ret = fwrite((void*)file, 1 , sizeof(PARA) , id) ;
-	    fclose(id) ;
-	    if (ret != sizeof(PARA))  return -1 ;
+	ret = fwrite((void*)file, 1 , sizeof(PARA) , id) ;
+	fclose(id) ;
+	if (ret != sizeof(PARA))  return -1 ;
     }
     else
     {

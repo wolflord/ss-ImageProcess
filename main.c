@@ -158,13 +158,13 @@ int main(int argc, char* argv[])
     InitUserInterface();
 
     // 1 second
-    // p_ui->TimerID[0] = g_timeout_add ( 1000, timmer_callback_1s,  NULL );
+    // p_ui->TimerID[0] = g_timeout_add ( 1000, TimmerCallback_1s,  NULL );
     // idle thread
     // gtk_idle_add  ( AppIdleFunction, NULL );
     // gtk_idle_add_full( G_PRIORITY_HIGH_IDLE, AppIdleFunction, NULL, NULL, NULL);
     gdk_threads_enter();
 	gtk_main();
 	gdk_threads_leave();
-	
+
     return 0 ;
 }

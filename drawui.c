@@ -22,8 +22,8 @@ static ICON_FILE icons[] = {
         {"res/icon4.ico" , "SS_ICON_5" , "frame_icon" } ,
         {"res/icon5.ico" , "SS_ICON_6" , "frame_icon" } ,
         {"res/icon9.ico" , "SS_ICON_7" , "frame_icon" } ,
-		{"res/icon6.ico" , "SS_ICON_8" , "frame_icon" } ,
-		{"res/icon7.ico" , "SS_ICON_9" , "frame_icon" } ,
+	{"res/icon6.ico" , "SS_ICON_8" , "frame_icon" } ,
+	{"res/icon7.ico" , "SS_ICON_9" , "frame_icon" } ,
 } ;
 
 // keep the size of maxmized screen
@@ -99,25 +99,24 @@ GtkWidget* OpenGLView()
     unsigned char* pixels ;
     int size_x  = SCREEN_WIDTH;
     int size_y  = SCREEN_HEIGHT;
-
     // create opengl view
     ImageView = gtk_drawing_area_new();
     ImageFrame = gtk_frame_new (NULL);
     gtk_frame_set_shadow_type (GTK_FRAME(ImageFrame),GTK_SHADOW_IN) ;
     gtk_container_add(GTK_CONTAINER(ImageFrame),ImageView);
     gtk_widget_modify_bg (ImageView, GTK_STATE_NORMAL, &color_dark );
-    
+
     ImageViewBuff = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, size_x, size_y);
     pixels = gdk_pixbuf_get_pixels (ImageViewBuff) ;
-    
+
     for(i = 0 ; i < 100 ; i += 10)
     {
         for(j= 0 ; j < 5 ; j++)
         {
            memset((void*)(pixels + (i+j)*SCREEN_WIDTH*3 ), 200 , SCREEN_WIDTH );
-        }             
+        }
     }
-    
+
 
     gtk_widget_add_events ( ImageView,
 			GDK_BUTTON_PRESS_MASK | GDK_SCROLL_MASK | GDK_BUTTON1_MOTION_MASK | GDK_BUTTON3_MOTION_MASK );
@@ -133,7 +132,6 @@ GtkWidget* OpenGLView()
     //  expose event is actually a redraw signal after redraw requirement is triger  (OnDraw)
     g_signal_connect (G_OBJECT (ImageView), "expose_event", G_CALLBACK (ImageViewExposeEvent), NULL);
     //g_signal_connect_swapped (G_OBJECT (MainFrame), "key_press_event", G_CALLBACK (key_press_event), ImageView);
-
 
     p_ui->ImageViewBuff = ImageViewBuff ;
     p_ui->pixels = pixels ;
@@ -271,31 +269,35 @@ static GtkActionEntry entries[] = {
   { "New", GTK_STOCK_NEW,                      /* name, stock id */
     "_New", "<control>N",                      /* label, accelerator */
     "Create a new file",                       /* tooltip */
-    G_CALLBACK (activate_action) },
+    G_CALLBACK (ActivateAction) },
   { "Open", GTK_STOCK_OPEN,                    /* name, stock id */
     "_Open","<control>O",                      /* label, accelerator */
     "Open a file",                             /* tooltip */
-    G_CALLBACK (open_file_action) },
+    G_CALLBACK (FileOpenAction) },
   { "Save", GTK_STOCK_SAVE,                    /* name, stock id */
     "_Save","<control>S",                      /* label, accelerator */
     "Save current file",                       /* tooltip */
-    G_CALLBACK (activate_action) },
+    G_CALLBACK (ActivateAction) },
   { "SaveAs", GTK_STOCK_SAVE,                  /* name, stock id */
     "Save _As...", NULL,                       /* label, accelerator */
     "Save to a file",                          /* tooltip */
-    G_CALLBACK (activate_action) },
+    G_CALLBACK (ActivateAction) },
   { "Quit", GTK_STOCK_QUIT,                    /* name, stock id */
     "_Quit", "<control>Q",                     /* label, accelerator */
     "Quit",                                    /* tooltip */
-    G_CALLBACK (activate_action) },
+    G_CALLBACK (ActivateAction) },
   { "About", "SS_ICON_9",                             /* name, stock id */
     "_About", "<control>A",                    /* label, accelerator */
     "About",                                   /* tooltip */
-    G_CALLBACK (activate_action) },
+    G_CALLBACK (ActivateAction) },
   { "Logo", "SS_ICON_8",                       /* name, stock id */
      NULL, NULL,                               /* label, accelerator */
     "GTK+",                                    /* tooltip */
-    G_CALLBACK (About_Message) },
+    G_CALLBACK (AboutMessage) },
+  { "EventBox", "SS_ICON_9",                   /* name, stock id */
+     NULL, NULL,                               /* label, accelerator */
+    "EventBox",                                    /* tooltip */
+     G_CALLBACK (EventBoxTest) },
 };
 static guint n_entries = G_N_ELEMENTS (entries);
 
@@ -304,7 +306,7 @@ static GtkToggleActionEntry toggle_entries[] = {
   { "Bold", GTK_STOCK_BOLD,                    /* name, stock id */
      "_Bold", "<control>B",                    /* label, accelerator */
     "Bold",                                    /* tooltip */
-    G_CALLBACK (activate_action),
+    G_CALLBACK (ActivateAction),
     TRUE },                                    /* is_active */
 };
 static guint n_toggle_entries = G_N_ELEMENTS (toggle_entries);
@@ -380,7 +382,7 @@ static const gchar *ui_info =
 "    <toolitem action='Quit'/>"
 "    <separator action='Sep1'/>"
 "    <toolitem action='Logo'/>"
-"    <toolitem action ='About'/>"
+"    <toolitem action ='EventBox'/>"
 "  </toolbar>"
 "</ui>";
 
@@ -403,10 +405,10 @@ void InitUserInterface()
     GdkScreen*        screen;
     GError *error = NULL;
 
-	screen = gdk_screen_get_default () ;
+    screen = gdk_screen_get_default () ;
     SCREEN_WIDTH = gdk_screen_get_width(screen)  ;
-	SCREEN_HEIGHT= gdk_screen_get_height(screen) ;
-	Debug( "screen   width %d, height %d" , SCREEN_WIDTH , SCREEN_HEIGHT) ;
+    SCREEN_HEIGHT= gdk_screen_get_height(screen) ;
+    Debug( "screen   width %d, height %d" , SCREEN_WIDTH , SCREEN_HEIGHT) ;
     /*init icons*/
     register_stock_icons ();
     /* main window */
@@ -431,12 +433,12 @@ void InitUserInterface()
     gtk_action_group_add_radio_actions (actions,
 					  color_entries, n_color_entries,
 					  COLOR_RED,
-					  G_CALLBACK (activate_radio_action),
+					  G_CALLBACK (ActivateRadioAction),
 					  NULL);
     gtk_action_group_add_radio_actions (actions,
 					  shape_entries, n_shape_entries,
 					  SHAPE_OVAL,
-					  G_CALLBACK (activate_radio_action),
+					  G_CALLBACK (ActivateRadioAction),
 					  NULL);
     // ui manager
     ui = gtk_ui_manager_new ();
@@ -448,10 +450,10 @@ void InitUserInterface()
     gtk_container_set_border_width (GTK_CONTAINER (WND), 0);
 
     if (!gtk_ui_manager_add_ui_from_string (ui, ui_info, -1, &error))
-	{
-	   g_message ("building menus failed: %s", error->message);
-	   g_error_free (error);
-	}
+    {
+       g_message ("building menus failed: %s", error->message);
+       g_error_free (error);
+    }
 
     MainBox = gtk_vbox_new (FALSE, 0);
     gtk_container_add (GTK_CONTAINER (WND), MainBox);
@@ -459,28 +461,27 @@ void InitUserInterface()
     gtk_box_pack_start (GTK_BOX (MainBox),
 			  gtk_ui_manager_get_widget (ui, "/MenuBar"),
 			  FALSE,FALSE,0);
-	gtk_box_pack_start (GTK_BOX (MainBox),
+    gtk_box_pack_start (GTK_BOX (MainBox),
 			  gtk_ui_manager_get_widget (ui, "/ToolBar"),
 			  FALSE,FALSE,0);
 
     //*******Create left stock bar and main image view
-	hBox = gtk_hbox_new(FALSE, 1);
-	gtk_box_pack_start (GTK_BOX(MainBox),hBox,TRUE,TRUE,0);
-	LeftBar = CreateLeftStockBar();
-	gtk_box_pack_start (GTK_BOX(hBox),LeftBar,FALSE,FALSE,0);
-	vBox = gtk_vbox_new(FALSE,3);
-	gtk_box_pack_start (GTK_BOX(hBox),vBox, TRUE,TRUE,0);
+    hBox = gtk_hbox_new(FALSE, 1);
+    gtk_box_pack_start (GTK_BOX(MainBox),hBox,TRUE,TRUE,0);
+    LeftBar = CreateLeftStockBar();
+    gtk_box_pack_start (GTK_BOX(hBox),LeftBar,FALSE,FALSE,0);
+    vBox = gtk_vbox_new(FALSE,3);
+    gtk_box_pack_start (GTK_BOX(hBox),vBox, TRUE,TRUE,0);
 
-	gtk_container_set_border_width (GTK_CONTAINER (vBox), 2);
+    gtk_container_set_border_width (GTK_CONTAINER (vBox), 2);
     ImageFrame = OpenGLView();
     GridDataFrame = gtk_frame_new (NULL);
-   	gtk_frame_set_shadow_type (GTK_FRAME(GridDataFrame),GTK_SHADOW_IN);
+    gtk_frame_set_shadow_type (GTK_FRAME(GridDataFrame),GTK_SHADOW_IN);
     gtk_box_pack_start (GTK_BOX(vBox), ImageFrame, TRUE,TRUE,0);
-	gtk_box_pack_start (GTK_BOX(vBox), GridDataFrame, FALSE,FALSE,0);
-	GridDataView = CreateDataView();
-	gtk_container_add(GTK_CONTAINER(GridDataFrame), GridDataView);
-	//******************************************************************
-
+    gtk_box_pack_start (GTK_BOX(vBox), GridDataFrame, FALSE,FALSE,0);
+    GridDataView = CreateDataView();
+    gtk_container_add(GTK_CONTAINER(GridDataFrame), GridDataView);
+    //******************************************************************
 
     p_ui->MainWnd = WND ;
     p_ui->ui  =  ui;
@@ -493,6 +494,45 @@ void InitUserInterface()
     p_ui->ImageFrame= ImageFrame;
     p_ui->GridDataFrame = GridDataFrame;
 
-
     gtk_widget_show_all(WND);
 }
+
+int CreateSettingButton(SETTING_BUTTON_P button)
+{
+    button->Button = gtk_event_box_new() ;
+    gtk_widget_set_size_request( button->Button , button->Width , button->Height) ;
+
+    gtk_widget_add_events (button->Button , button->EventMark ) ;
+    g_signal_connect (G_OBJECT(button->Button) , "button_press_event" ,G_CALLBACK(button->CallBackFunc) , NULL) ;
+
+    button->Label = gtk_label_new(NULL) ;
+    gtk_label_set_markup(GTK_LABEL(button->Label) , button->Markup);
+
+    return 0;
+}
+
+void SetWidgetBackGroud(GtkWidget *widget,GdkPixbuf* image)
+{
+	GtkStyle *style;
+	GdkPixmap *pixmap;
+	GdkColormap *colormap;
+
+	int alpha_threshold = 0;
+
+	colormap = gdk_colormap_get_system ();
+        gdk_pixbuf_render_pixmap_and_mask_for_colormap(image,
+			colormap, &pixmap, NULL, alpha_threshold);
+
+	style = gtk_style_copy(widget->style);
+
+	if (style->bg_pixmap[GTK_STATE_NORMAL])
+	{
+		g_object_unref(style->bg_pixmap[GTK_STATE_NORMAL]);
+	}
+
+	style->bg_pixmap[GTK_STATE_NORMAL] = (pixmap);
+	gtk_widget_set_style( widget, style);
+	g_object_unref(style);
+
+}
+

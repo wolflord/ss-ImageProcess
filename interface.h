@@ -39,6 +39,7 @@ typedef struct _SETTING_BUTTON
 
     LOCATION  ScrollBar ;
 
+    GdkPixbuf* backgroud[3];
     GdkEventType  EventMark;
     void*  CallBackFunc ;
     int   CurrentStatus ;

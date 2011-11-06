@@ -76,6 +76,7 @@ int InitParameters()
 			.name  = "NULL",
 		}
     };
+
 #if 0
     WEDGE tmpW =
     {

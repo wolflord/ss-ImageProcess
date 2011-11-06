@@ -41,6 +41,7 @@ extern int  write_parameter_file(const char* filename, PARA_P file);
 //************************************
 extern void InitUserInterface() ;
 extern void SetWidgetBackGroud(GtkWidget *widget,GdkPixbuf* image) ;
+extern void SetWidgetBackGroud(GtkWidget *widget,GdkPixbuf* image) ;
 extern int CreateSettingButton(SETTING_BUTTON_P button) ;
 //************************************
 // callback.c

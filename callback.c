@@ -44,18 +44,22 @@ void SettingButtonCallBackFunc0(GtkWidget* widget, GdkEvent* event, gpointer dat
     Debug("SettingButtonCallBackFunc0");
 
     SETTING_BUTTON_P button = (SETTING_BUTTON_P) data ;
+
     if(button->CurrentStatus)
     {
         button->Markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>%s</span>", "TTTTT!");
-	//gtk_label_set_markup(GTK_LABEL(button->Label) , button->Markup);
+	gtk_label_set_markup(GTK_LABEL(button->Label) , button->Markup);
 	button->CurrentStatus = 0 ;
+	SetWidgetBackGroud(button->Button , p_ui->ImageBuf[1]) ;
     }
     else
     {
         button->Markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>%s</span>", "HELLO!");
-	//gtk_label_set_markup(GTK_LABEL(button->Label) , button->Markup);
+	gtk_label_set_markup(GTK_LABEL(button->Label) , button->Markup);
 	button->CurrentStatus = 1 ;
+	SetWidgetBackGroud(button->Button , p_ui->ImageBuf[0]) ;
     }
+    g_free(button->Markup);
 
 }
 
@@ -216,17 +220,18 @@ void EventBoxTest (GtkAction* action)
 {
     Debug("EventBox test!!!") ;
     GtkWidget* window;
-    SETTING_BUTTON button ;
+    SETTING_BUTTON_P button = &p_ui->button1;
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-    button.Markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>%s</span>", "HELLO!");
-    button.EventMark = GDK_BUTTON_PRESS_MASK ;
-    button.CallBackFunc =  SettingButtonCallBackFunc[0];
-    button.Width = 100 ;
-    button.Height= 100 ;
-    CreateSettingButton(&button) ;
+    button->Markup = g_markup_printf_escaped ("<span foreground='white' font_desc='10'>%s</span>", "HELLO!");
+    button->EventMark = GDK_BUTTON_PRESS_MASK ;
+    button->CallBackFunc =  SettingButtonCallBackFunc[0];
+    button->Width = 114 ;
+    button->Height=  85 ;
+    CreateSettingButton(button) ;
 
-    gtk_container_add(GTK_CONTAINER(window) , button.Button) ;
+    gtk_container_add(GTK_CONTAINER(window) , button->Button) ;
+    g_free(button->Markup);
     gtk_widget_show_all(window) ;
 
 }

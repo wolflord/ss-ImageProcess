@@ -30,6 +30,6 @@ ${OBJS}:${INCS}
 
 .PHONY:clean
 clean:
-	rm -f ${PROG_NAME} ${OBJS}
+	rm -f ${PROG_NAME} ${OBJS} .CONFIG
 
 rebuild: clean all

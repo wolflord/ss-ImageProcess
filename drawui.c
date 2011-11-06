@@ -26,6 +26,11 @@ static ICON_FILE icons[] = {
 	{"res/icon7.ico" , "SS_ICON_9" , "frame_icon" } ,
 } ;
 
+static char* PixBufFile[] ={
+    "res/image0.png" ,
+    "res/image1.png" ,
+} ;
+
 // keep the size of maxmized screen
 int SCREEN_WIDTH  = 0;
 int SCREEN_HEIGHT = 0;
@@ -88,6 +93,19 @@ static void register_stock_icons (void)
     Debug("%d ICON FILE LOADED!", icon_num);
 }
 
+static void load_pixbuf_file()
+{
+    int ItemNum = sizeof(PixBufFile) / sizeof(char*) ;
+    int i ;
+
+    for(i = 0 ; i < ItemNum ; i++)
+    {
+	p_ui->ImageBuf[i] = NULL ;
+	p_ui->ImageBuf[i] = gdk_pixbuf_new_from_file (PixBufFile[i] , NULL);
+        if(!p_ui->ImageBuf[i])
+	    Debug ("Load ImageFile Error %d !" , i) ;
+    }
+}
 
 GtkWidget* OpenGLView()
 {
@@ -410,6 +428,8 @@ void InitUserInterface()
     Debug( "screen   width %d, height %d" , SCREEN_WIDTH , SCREEN_HEIGHT) ;
     /*init icons*/
     register_stock_icons ();
+    /*load image*/
+    load_pixbuf_file()   ;
     /* main window */
     WND = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_widget_set_size_request (WND , 800 , 600) ;
@@ -507,7 +527,6 @@ int CreateSettingButton(SETTING_BUTTON_P button)
 
     button->Label = gtk_label_new(NULL) ;
     gtk_label_set_markup(GTK_LABEL(button->Label) , button->Markup);
-
     gtk_container_add(GTK_CONTAINER(button->Button) , button->Label) ;
 
     return 0;

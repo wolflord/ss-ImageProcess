@@ -146,12 +146,12 @@ int main(int argc, char* argv[])
 
     if(ret)
     {
-		Debug("Initialize Parameters!") ;
-		InitParameters() ;
+	Debug("Initialize Parameters!") ;
+	InitParameters() ;
     }
     /* Init Gtk. */
     g_thread_init(NULL);
-	gdk_threads_init();
+    gdk_threads_init();
     gtk_init( &argc, &argv) ;
 
     Debug("Initialize the User Interface!") ;
@@ -163,8 +163,8 @@ int main(int argc, char* argv[])
     // gtk_idle_add  ( AppIdleFunction, NULL );
     // gtk_idle_add_full( G_PRIORITY_HIGH_IDLE, AppIdleFunction, NULL, NULL, NULL);
     gdk_threads_enter();
-	gtk_main();
-	gdk_threads_leave();
+    gtk_main();
+    gdk_threads_leave();
 
     return 0 ;
 }

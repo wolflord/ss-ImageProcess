@@ -6,6 +6,7 @@
 
 #define SETTING_BUTTON_LABEL_LENGTH 50
 #define SETTING_BUTTON_STEP_COUNT   5
+#define IMAGE_MAX_STORE_QTY         10
 
 
 typedef struct _LOCATION
@@ -42,6 +43,9 @@ typedef struct _SETTING_BUTTON
     void*  CallBackFunc ;
     int   CurrentStatus ;
 
+
+
+
 }SETTING_BUTTON , *SETTING_BUTTON_P  ;
 
 
@@ -66,6 +70,9 @@ typedef struct  UserInterface
     guint         TimerID[5];
     PARA                para;
 
+    GdkPixbuf*   ImageBuf[IMAGE_MAX_STORE_QTY] ;
+
+    SETTING_BUTTON button1 ;
 }UI, *UI_P ;
 
 
